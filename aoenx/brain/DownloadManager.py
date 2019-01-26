@@ -2,10 +2,10 @@ import youtube_dl
 import os
 
 # Constants
-yturl = "https://www.youtube.com/watch?v="
 videoFileType = ".mp4"
 tnFileType = ".jpg"
-data = '../data/'
+videoData = os.path.join('..', 'data', 'videos')
+tnData = os.path.join('..', 'data', 'thumbnails')
 
 
 class DownloadManager:
@@ -13,18 +13,20 @@ class DownloadManager:
     Class for managing the downloading and deleting of video files used in
     analysis
     """
-    def download(self, id):
+    def download(self, url):
         """
         Given a unique ID, download the YouTube video
         """
-        url = yturl + id
-        code = data + id + videoFileType
+        id = str(hash(url))
 
-        if not os.path.isdir(data):
-            os.makedirs(data)
+        if not os.path.isdir(videoData):
+            os.makedirs(videoData)
+
+        if not os.path.isdir(tnData):
+            os.makedirs(tnData)
 
         ydl_opts = {
-            'outtmpl': code,
+            'outtmpl': os.path.join(videoData, id + videoFileType),
             'writethumbnail': True,
         }
 
@@ -34,18 +36,23 @@ class DownloadManager:
 
                 title = info_dict.get('title', None)
 
+                os.rename(os.path.join(videoData, id + tnFileType), os.path.join(tnData, id + tnFileType))
+
                 return title
 
         except Exception as e:
             print("Failed to download video: " + str(e))
             return None
 
-    def delete(self, id):
+    def delete(self, url):
         """
         Given a unique ID, delete the video file
         """
+
+        id = str(hash(url))
+
         try:
-            os.remove(data + id + videoFileType)
-            os.remove(data + id + tnFileType)
+            os.remove(os.path.join(videoData, id + videoFileType))
+            os.remove(os.path.join(tnData, id + tnFileType))
         except Exception as e:
             print("Failed to delete file: " + str(e))

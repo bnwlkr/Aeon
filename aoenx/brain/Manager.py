@@ -11,18 +11,18 @@ class Manager:
         #self.scf = SceneFinder()
         #self.hmf = HeatMapFinder()
 
-    def analyze(self, id):
+    def analyze(self, url):
         """
         Do the full analysis of the video here
         """
-        title = self.dlm.download(id)
+        title = self.dlm.download(url)
 
-        #thumbnail = self.tmf.find(id)
-        #comments = self.cmf.find(id)
-        #scenes = self.scf.find(id)
-        #heatmap = self.hmf.find(id)
+        #thumbnail = self.tmf.find(url)
+        #comments = self.cmf.find(url)
+        #scenes = self.scf.find(url)
+        #heatmap = self.hmf.find(url)
 
-        self.dlm.delete(id)
+        self.dlm.delete(url)
 
         obj = {
             'title': title,
@@ -35,6 +35,6 @@ class Manager:
         return obj
 
 
-# To test, uncomment this and run the script
+# To test, uncomment this and run the script or run this in a python terminal
 #m = Manager()
-#print(m.analyze("MEEJOZkmIxU"))
+#print(m.analyze("https://www.youtube.com/watch?v=MEEJOZkmIxU"))
