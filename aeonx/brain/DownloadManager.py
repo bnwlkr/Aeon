@@ -5,8 +5,8 @@ import os
 ytUrl = "https://www.youtube.com/watch?v="
 videoFileType = ".mp4"
 tnFileType = ".jpg"
-videoData = os.path.join('..', 'data', 'videos')
-tnData = os.path.join('..', 'data', 'thumbnails')
+videoData = os.path.join('data', 'videos')
+tnData = os.path.join('data', 'thumbnails')
 
 
 class DownloadManager:
@@ -41,10 +41,11 @@ class DownloadManager:
                 title = info_dict.get('title', None)
                 width = info_dict.get('width', None)
                 height = info_dict.get('height', None)
+                length = info_dict.get('duration', None)
 
                 os.rename(os.path.join(videoData, id + tnFileType), os.path.join(tnData, id + tnFileType))
 
-                return title, (width, height)
+                return title, length, (width, height)
 
         except Exception as e:
             print("Failed to download video: " + str(e))

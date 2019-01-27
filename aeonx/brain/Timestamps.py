@@ -81,12 +81,14 @@ class Timestamps:
     def parse_comments(video_id, num_pages):
         print("[timestamps] parsing comments...")
         key = Timestamps.load_api_key()
-        results, ts = Timestamps.get_comments_thread_by_video_id(video_id=video_id, num=100, key=key, next_page=None)
+        results, ts = Timestamps.get_comments_thread_by_video_id(video_id=video_id,
+                                                                 num=100, key=key, next_page=None)
         pages_done = 1
         while ts and pages_done < num_pages:
             print("[timestamps] loaded a new page")
             try:
-                new_results, ts = Timestamps.get_comments_thread_by_video_id(video_id=video_id, num=100, key=key, next_page=ts)
+                new_results, ts = Timestamps.get_comments_thread_by_video_id(video_id=video_id,
+                                                                             num=100, key=key, next_page=ts)
             except HTTPError:
                 break
             results += new_results

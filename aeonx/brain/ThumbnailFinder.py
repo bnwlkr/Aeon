@@ -1,10 +1,8 @@
 from PIL import Image
-from DownloadManager import DownloadManager, tnData, tnFileType, videoData, videoFileType
+from brain.DownloadManager import tnData, tnFileType, videoData, videoFileType
 import numpy as np
-from skimage.measure import compare_ssim as ssim
 import os
 import subprocess
-import math
 
 class ThumbnailFinder:
     """
@@ -22,8 +20,12 @@ class ThumbnailFinder:
         os.remove(relTnPath)
         im.save(relTnPath)
 
-        output = "..\\data\\" + id + ".txt"
-        cmd = "ffmpeg.exe -i ..\\data\\videos\\" + id + ".mp4 -loop 1 -i ..\\data\\thumbnails\\" + id + '.jpg -an -filter_complex "blend=difference:shortest=1,blackframe=99:128" -f null - > ' + output + ' 2>&1'
+        output = os.path.join("data", id + ".txt")
+        cmd = "ffmpeg -i " + os.path.join(videoData, id) + ".mp4 -loop 1 -i " \
+              + os.path.join(tnData, id) \
+              + '.jpg -an -filter_complex "blend=difference:shortest=1,blackframe=99:128" -f null - > ' \
+              + output + ' 2>&1'
+
         print(cmd)
         ps = subprocess.Popen(cmd, shell=True)
         ps.wait()
@@ -41,7 +43,7 @@ class ThumbnailFinder:
             frame = [l[l.find(" frame:") + 7:] for l in frame]
             frame = [(round(int(l[:l.find(" ")]) / 100) + 0.5) * 100 for l in frame]
             count = np.bincount(frame)
-            tn = round(np.argmax(count) / fps, 2)
+            tn = round(np.argmax(count) / fps)
 
         os.remove(output)
 

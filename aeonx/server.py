@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from threading import Thread
-from Data import Data
+import json
+from brain.Manager import Manager
 
 app = Flask(__name__)
 
@@ -17,7 +18,7 @@ def update_heatmap():
     params = request.form
     new_data = params['data']
     video_id = params['videoId']
-    result = mgr.updateHeatmap(video_id, new_data)
+    result = mgr.updateHeatmap(video_id, json.loads(new_data))
     return result
 
 
@@ -29,7 +30,7 @@ def get_video(video_id):
     else:
         fetch_thread = Thread(target=mgr.analyze, kwargs={'id': video_id})
         fetch_thread.start()
-        return "Video not found, getting"
+        return "nope"
 
 
 if __name__ == "__main__":

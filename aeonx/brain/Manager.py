@@ -1,8 +1,7 @@
-from DownloadManager import DownloadManager
-from ThumbnailFinder import ThumbnailFinder
-from Data import Data
-from Timestamps import Timestamps
-import subprocess
+from brain.DownloadManager import DownloadManager
+from brain.ThumbnailFinder import ThumbnailFinder
+from brain.Data import Data
+from brain.Timestamps import Timestamps
 
 class Manager:
     """
@@ -18,7 +17,7 @@ class Manager:
         """
         Do the full analysis of the video here
         """
-        title, shape = self.dlm.download(id)
+        title, length, shape = self.dlm.download(id)
 
         if title is None:
             return {}
@@ -29,19 +28,20 @@ class Manager:
         self.dlm.delete(id)
 
         obj = {
-            'id': id,
+            '_id': id,
             'title': title,
             'comments': comments,
             'thumbnail': thumbnail,
             #'scenes': scenes,
+            'heatmap': [0]*length
         }
 
         self.data.add_video(obj)
 
         return obj
 
-    def updateHeatmap(video_id, new_data):
+    def updateHeatmap(self, video_id, new_data):
         return self.data.update_heatmap(video_id, new_data)
 
-    def findVideo(video_id):
+    def findVideo(self, video_id):
         return self.data.find_video(video_id)
