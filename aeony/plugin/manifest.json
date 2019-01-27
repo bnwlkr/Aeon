@@ -7,5 +7,19 @@
       "default_icon": "icon.png",
       "default_popup": "popup.html"
   },
+  "permissions": [
+        "webNavigation",
+        "tabs",
+        "activeTab",
+        "storage"
+  ],
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content.js"]
+  }],
+  "background": {
+    "scripts": ["jquery-3.1.1.min.js", "background.js"],
+    "persistent": false
+  },
   "manifest_version": 2
 }
