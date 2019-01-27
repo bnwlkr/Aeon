@@ -1,5 +1,8 @@
 from DownloadManager import DownloadManager
 from ThumbnailFinder import ThumbnailFinder
+from Data import Data
+from Timestamps import Timestamps
+import subprocess
 
 class Manager:
     """
@@ -8,36 +11,37 @@ class Manager:
     def __init__(self):
         self.dlm = DownloadManager()
         self.tmf = ThumbnailFinder()
-        #self.cmd = CommmentDownloader()
+        self.data = Data()
         #self.scf = SceneFinder()
-        #self.hmf = HeatMapFinder()
 
     def analyze(self, id):
         """
         Do the full analysis of the video here
         """
-        title, fps = self.dlm.download(id)
+        title, shape = self.dlm.download(id)
 
         if title is None:
             return {}
 
-        thumbnail = self.tmf.find(id, fps)
-        #comments = self.cmf.find(id)
-        #heatmap = self.hmf.find(id)
+        thumbnail = self.tmf.find(id, shape)
+        comments = Timestamps.parse_comments(video_id=id, num_pages=50)
 
         self.dlm.delete(id)
 
         obj = {
+            'id': id,
             'title': title,
-            #'comments': comments,
+            'comments': comments,
             'thumbnail': thumbnail,
             #'scenes': scenes,
-            #'heatmap': heatmap,
         }
+
+        self.data.add_video(obj)
 
         return obj
 
+    def updateHeatmap(video_id, new_data):
+        return self.data.update_heatmap(video_id, new_data)
 
-# To test, uncomment this and run the script or run this in a python terminal
-m = Manager()
-print(m.analyze("MEEJOZkmIxU"))
+    def findVideo(video_id):
+        return self.data.find_video(video_id)

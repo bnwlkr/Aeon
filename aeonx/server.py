@@ -4,7 +4,7 @@ from Data import Data
 
 app = Flask(__name__)
 
-data = Data()
+mgr = Manager()
 
 
 @app.route("/")
@@ -17,17 +17,17 @@ def update_heatmap():
     params = request.form
     new_data = params['data']
     video_id = params['videoId']
-    result = data.update_heatmap(video_id, new_data)
+    result = mgr.updateHeatmap(video_id, new_data)
     return result
 
 
 @app.route("/video/<video_id>", methods=['GET','POST'])
 def get_video(video_id):
-    video = data.find_video(video_id)
+    video = mgr.findVideo(video_id)
     if video is not None:
         return jsonify(video)
     else:
-        fetch_thread = Thread(target=data.add_video, kwargs={'video_id': video_id})
+        fetch_thread = Thread(target=mgr.analyze, kwargs={'id': video_id})
         fetch_thread.start()
         return "Video not found, getting"
 

@@ -26,8 +26,11 @@ class DownloadManager:
         if not os.path.isdir(tnData):
             os.makedirs(tnData)
 
+        self.delete(id)
+
         ydl_opts = {
             'outtmpl': os.path.join(videoData, id + videoFileType),
+            'format': 'mp4',
             'writethumbnail': True,
         }
 
@@ -36,11 +39,12 @@ class DownloadManager:
                 info_dict = ydl.extract_info(url, download=True)
 
                 title = info_dict.get('title', None)
-                fps = info_dict.get('fps', None)
+                width = info_dict.get('width', None)
+                height = info_dict.get('height', None)
 
                 os.rename(os.path.join(videoData, id + tnFileType), os.path.join(tnData, id + tnFileType))
 
-                return title, fps
+                return title, (width, height)
 
         except Exception as e:
             print("Failed to download video: " + str(e))
