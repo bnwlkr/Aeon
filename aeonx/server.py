@@ -1,4 +1,5 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
+from threading import Thread
 from .Data import Data
 
 app = Flask(__name__)
@@ -24,10 +25,11 @@ def update_heatmap():
 def get_video(video_id):
     video = data.find_video(video_id)
     if video is not None:
-        return video
+        return jsonify(video)
     else:
-        data.add_video(video_id)
-        return "Video not found"
+        fetch_thread = Thread(target=data.add_video, kwargs={'video_id': video_id})
+        fetch_thread.start()
+        return "Video not found, getting"
 
 
 app.run(debug=True)
