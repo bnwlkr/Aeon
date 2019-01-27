@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 from urllib.request import urlopen, Request
+from urllib.error import HTTPError
 import json
 import re
 
@@ -65,18 +66,29 @@ class Timestamps:
             times = Timestamps.parse_for_timestamp(data=data)
             for time in times:
                 result = {}
-                result[time] = data
+                if len(data) > 200:
+                    data = data[0:200]
+                result[str(time)] = data
+                print("[timestamps] found a timestamp: " + str(time) + " comment: " + str(data))
                 results.append(result)
-        next_page_token = comments_data['nextPageToken']
+        try:
+            next_page_token = comments_data['nextPageToken']
+        except KeyError:
+            next_page_token = None
         return results, next_page_token
 
     @staticmethod
     def parse_comments(video_id, num_pages):
+        print("[timestamps] parsing comments...")
         key = Timestamps.load_api_key()
         results, ts = Timestamps.get_comments_thread_by_video_id(video_id=video_id, num=100, key=key, next_page=None)
         pages_done = 1
         while ts and pages_done < num_pages:
-            new_results, ts = Timestamps.get_comments_thread_by_video_id(video_id=video_id, num=100, key=key, next_page=ts)
+            print("[timestamps] loaded a new page")
+            try:
+                new_results, ts = Timestamps.get_comments_thread_by_video_id(video_id=video_id, num=100, key=key, next_page=ts)
+            except HTTPError:
+                break
             results += new_results
             pages_done += 1
 

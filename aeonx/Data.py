@@ -1,7 +1,8 @@
 from pymongo import MongoClient
 from .brain.DownloadManager import DownloadManager
 from .brain.Timestamps import Timestamps
-from .brain.ThumbnailFinder import ThumbnailFinder
+from pymongo.errors import DuplicateKeyError
+#from .brain.ThumbnailFinder import ThumbnailFinder
 
 
 class Data():
@@ -43,18 +44,21 @@ class Data():
                 return "heatmap successfully updated"
 
     def add_video(self, video_id):
-        title, fps = DownloadManager.download(video_id)
+        dl = DownloadManager()
+        title, fps = dl.download(id=video_id)
         if title is not None:
             comments = Timestamps.parse_comments(video_id=video_id, num_pages=50)
-            thumb = ThumbnailFinder.find(video_id, fps)
             video = {
-                'id': video_id,
+                '_id': video_id,
                 'title': title,
                 'comments': comments,
-                'thumbnail': thumb,
+                #'thumbnail': thumb,
                 'scenes': [],
                 'heatmap': [],
             }
             video_collection = self.db['videos']
-            new_id = video_collection.insert_one(video).inserted_id
-            print(new_id)
+            try:
+                new_id = video_collection.insert_one(video).inserted_id
+                print("[timestamps] inserted video: " + str(new_id))
+            except DuplicateKeyError:
+                print("[timestamps] video was already added")
