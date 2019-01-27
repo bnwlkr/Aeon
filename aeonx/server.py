@@ -1,23 +1,37 @@
-import asyncio
-import websockets
+from flask import Flask, request, jsonify
+from threading import Thread
 import json
-import time
-import os
+from brain.Manager import Manager
 
-async def boot(websocket, path):
-    print("connected client")
-    try:
-        await handleClient(websocket)
-    except websockets.exceptions.ConnectionClosed:
-        print("connection closed")
+app = Flask(__name__)
+
+mgr = Manager()
 
 
-async def handleClient(websocket):
-    async for message in websocket:
-        print(message)
-    
+@app.route("/")
+def root():
+    return "aeon: saving your online time since 2019"
 
-start_server = websockets.serve(boot, '10.0.0.8', port=8000)
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
 
+@app.route("/heatmap", methods=['POST'])
+def update_heatmap():
+    params = request.form
+    new_data = params['data']
+    video_id = params['videoId']
+    result = mgr.updateHeatmap(video_id, json.loads(new_data))
+    return result
+
+
+@app.route("/video/<video_id>", methods=['GET','POST'])
+def get_video(video_id):
+    video = mgr.findVideo(video_id)
+    if video is not None:
+        return jsonify(video)
+    else:
+        fetch_thread = Thread(target=mgr.analyze, kwargs={'id': video_id})
+        fetch_thread.start()
+        return "nope"
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
