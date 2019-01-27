@@ -46,6 +46,7 @@ class Timestamps:
             'part': "snippet",
             'videoId': video_id,
             'maxResults': num,
+            'order': 'relevance',
         }
 
         if next_page is not None:
@@ -70,7 +71,7 @@ class Timestamps:
         return results, next_page_token
 
     @staticmethod
-    def download_comments(video_id, num_pages):
+    def parse_comments(video_id, num_pages):
         key = Timestamps.load_api_key()
         results, ts = Timestamps.get_comments_thread_by_video_id(video_id=video_id, num=100, key=key, next_page=None)
         pages_done = 1
@@ -97,8 +98,3 @@ class Timestamps:
         description = video_data['description']
         times = Timestamps.parse_for_timestamp(description)
         return times
-
-
-dl = Timestamps()
-results = dl.parse_description('kffacxfA7G4')
-print(results)
