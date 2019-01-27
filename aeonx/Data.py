@@ -1,18 +1,19 @@
 from pymongo import MongoClient
-from .brain.DownloadManager import DownloadManager
-from .brain.Timestamps import Timestamps
+from brain.DownloadManager import DownloadManager
+from brain.Timestamps import Timestamps
 from pymongo.errors import DuplicateKeyError
 #from .brain.ThumbnailFinder import ThumbnailFinder
 
 
 class Data():
 
-    db_client = MongoClient()
+    URI = "mongodb://aeonmongo:0RMcFPsiTtjJ0drUtntVtPoD0PZ90dzOOD6e2hOKuzjXYhlU1BSIapsU8uZi1f7a9M2qGefjDVcpupKFgl06Lg==@aeonmongo.documents.azure.com:10255/?ssl=true&replicaSet=globaldb"
+    db_client = MongoClient(URI)
     db = db_client['video_data']
 
     def find_video(self, video_id):
         video_collection = self.db['videos']
-        return video_collection.find_one({'id': video_id})
+        return video_collection.find_one({'_id': video_id})
 
     def update_heatmap(self, video_id, new_data):
         video = self.find_video(video_id)

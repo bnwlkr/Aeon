@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from threading import Thread
-from .Data import Data
+from Data import Data
 
 app = Flask(__name__)
 
@@ -32,4 +32,5 @@ def get_video(video_id):
         return "Video not found, getting"
 
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
