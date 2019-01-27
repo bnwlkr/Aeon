@@ -43,7 +43,11 @@ class ThumbnailFinder:
             frame = [l[l.find(" frame:") + 7:] for l in frame]
             frame = [(round(int(l[:l.find(" ")]) / 100) + 0.5) * 100 for l in frame]
             count = np.bincount(frame)
-            tn = round(np.argmax(count) / fps)
+            try:
+                tn = round(np.argmax(count) / fps)
+            except ValueError:
+                print("[thumbnail] thumbnail could not be located")
+                tn = None
 
         os.remove(output)
 

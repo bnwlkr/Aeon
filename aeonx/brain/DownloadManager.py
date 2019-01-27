@@ -49,7 +49,7 @@ class DownloadManager:
 
         except Exception as e:
             print("Failed to download video: " + str(e))
-            return None, None
+            return None, None, None
 
     def delete(self, id):
         """
