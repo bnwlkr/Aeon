@@ -1,40 +1,57 @@
-import OpenCV
 from PIL import Image
-from DownloadManager import DownloadManager
+from DownloadManager import DownloadManager, tnData, tnFileType, videoData, videoFileType
 import numpy as np
+from skimage.measure import compare_ssim as ssim
+import os
 
 class ThumbnailFinder:
     """
+    A class for finding the closest key frame to the thumbnail
     """
     def find(self, url):
         """
+        The overall function for getting the best thumbnail
         """
         id = str(hash(url))
-        path = id
+        relPath = os.path.join(tnData, id + tnFileType)
+        absPath = os.path.abspath(relPath)
 
-        tn = im.open(os.path.join(tnData, id + tnFileType))
-
-        kf = self.getKeyFrames(path)
+        kf = self.getKeyFrames(absPath)
 
         sc = self.getSnapshots(kf)
 
-        def dist(im):
-            return 0
+        if len(sc) > 0:
+            tn = Image.open(relPath)
+            tn = tn.convert("L")
+            tn = np.asarray(tn)
+            tn = tn.copy()
 
-        vdist = np.vectorize(dist)
+            def dist(im):
+                im = im.convert("L")
+                im = np.asarray(im)
+                im = im.copy()
+                im.thumbnail(tn.size)
+                return np.dot(im, tn)
 
-        dists = vdist(sc)
+            vdist = np.vectorize(dist)
 
-        ind = np.argmin(dists)
+            dists = vdist(sc)
 
-        return kf[ind]
+            ind = np.argmin(dists)
+
+            return kf[ind]
+
+        else:
+            return None
 
     def getKeyFrames(self, path):
         """
+        Use Microsoft Azure API to get the key frame timestamps
         """
-        pass
+        return []
 
     def getSnapshots(self, path):
         """
+        Produce the actual frames associated with the key frame timestamps
         """
-        pass
+        return []

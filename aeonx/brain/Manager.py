@@ -1,4 +1,5 @@
 from DownloadManager import DownloadManager
+from ThumbnailFinder import ThumbnailFinder
 
 class Manager:
     """
@@ -6,7 +7,7 @@ class Manager:
     """
     def __init__(self):
         self.dlm = DownloadManager()
-        #self.tmf = ThumbnailFinder()
+        self.tmf = ThumbnailFinder()
         #self.cmd = CommmentDownloader()
         #self.scf = SceneFinder()
         #self.hmf = HeatMapFinder()
@@ -17,7 +18,7 @@ class Manager:
         """
         title = self.dlm.download(url)
 
-        #thumbnail = self.tmf.find(url)
+        thumbnail = self.tmf.find(url)
         #comments = self.cmf.find(url)
         #heatmap = self.hmf.find(url)
 
@@ -26,7 +27,7 @@ class Manager:
         obj = {
             'title': title,
             #'comments': comments,
-            #'thumbnail': thumbnail,
+            'thumbnail': thumbnail,
             #'scenes': scenes,
             #'heatmap': heatmap,
         }
@@ -35,5 +36,5 @@ class Manager:
 
 
 # To test, uncomment this and run the script or run this in a python terminal
-m = Manager()
-m.analyze("https://www.youtube.com/watch?v=MEEJOZkmIxU")
+#m = Manager()
+#print(m.analyze("https://www.youtube.com/watch?v=MEEJOZkmIxU"))
