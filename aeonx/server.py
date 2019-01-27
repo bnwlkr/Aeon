@@ -1,23 +1,33 @@
-import asyncio
-import websockets
-import json
-import time
-import os
+from flask import Flask, request
+from .Data import Data
 
-async def boot(websocket, path):
-    print("connected client")
-    try:
-        await handleClient(client)
-    except websockets.exceptions.ConnectionClosed:
-        print("connection closed")
+app = Flask(__name__)
+
+data = Data()
 
 
-async def handleClient(client):
-    async for message in client.websocket:
-        print(message)
-    
+@app.route("/")
+def root():
+    return "aeon: saving your online time since 2019"
 
-start_server = websockets.serve(boot, port=8000)
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
 
+@app.route("/heatmap", methods=['POST'])
+def update_heatmap():
+    params = request.form
+    new_data = params['data']
+    video_id = params['videoId']
+    result = data.update_heatmap(video_id, new_data)
+    return result
+
+
+@app.route("/video/<video_id>", methods=['GET','POST'])
+def get_video(video_id):
+    video = data.find_video(video_id)
+    if video is not None:
+        return video
+    else:
+        data.add_video(video_id)
+        return "Video not found"
+
+
+app.run(debug=True)
