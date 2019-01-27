@@ -3,22 +3,23 @@ from DownloadManager import DownloadManager, tnData, tnFileType, videoData, vide
 import numpy as np
 from skimage.measure import compare_ssim as ssim
 import os
+import datetime
+import time
 
 class ThumbnailFinder:
     """
     A class for finding the closest key frame to the thumbnail
     """
-    def find(self, url):
+    def find(self, id, fps):
         """
         The overall function for getting the best thumbnail
         """
-        id = str(hash(url))
         relPath = os.path.join(tnData, id + tnFileType)
         absPath = os.path.abspath(relPath)
 
         kf = self.getKeyFrames(absPath)
 
-        sc = self.getSnapshots(kf)
+        sc = self.getSnapshots(kf, fps)
 
         if len(sc) > 0:
             tn = Image.open(relPath)
@@ -50,8 +51,19 @@ class ThumbnailFinder:
         """
         return []
 
-    def getSnapshots(self, path):
+    def getSnapshots(self, times, fps):
         """
         Produce the actual frames associated with the key frame timestamps
         """
+        def frames(t):
+            t = t.split(".")
+            s = time.strptime(t[0],'%H:%M:%S')
+            s = 60 * (60 * s.tm_hour + s.tm_min) + s.tm_sec
+            s = s * 1000 + int(t[1])
+            return s * fps
+
+        vframes = np.vectorize(frames)
+
+        inds = vframes(times)
+
         return []

@@ -2,6 +2,7 @@ import youtube_dl
 import os
 
 # Constants
+ytUrl = "https://www.youtube.com/watch?v="
 videoFileType = ".mp4"
 tnFileType = ".jpg"
 videoData = os.path.join('..', 'data', 'videos')
@@ -13,11 +14,11 @@ class DownloadManager:
     Class for managing the downloading and deleting of video files used in
     analysis
     """
-    def download(self, url):
+    def download(self, id):
         """
         Given a unique ID, download the YouTube video
         """
-        id = str(hash(url))
+        url = ytUrl + id
 
         if not os.path.isdir(videoData):
             os.makedirs(videoData)
@@ -35,22 +36,20 @@ class DownloadManager:
                 info_dict = ydl.extract_info(url, download=True)
 
                 title = info_dict.get('title', None)
+                fps = info_dict.get('fps', None)
 
                 os.rename(os.path.join(videoData, id + tnFileType), os.path.join(tnData, id + tnFileType))
 
-                return title
+                return title, fps
 
         except Exception as e:
             print("Failed to download video: " + str(e))
-            return None
+            return None, None
 
-    def delete(self, url):
+    def delete(self, id):
         """
         Given a unique ID, delete the video file
         """
-
-        id = str(hash(url))
-
         try:
             os.remove(os.path.join(videoData, id + videoFileType))
             os.remove(os.path.join(tnData, id + tnFileType))
