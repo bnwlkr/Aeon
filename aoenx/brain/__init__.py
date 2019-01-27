@@ -1,2 +1,2 @@
 from .ThumbFinder import ThumbFinder
-from .CommentDownloader import CommentDownloader
+from .Timestamps import Timestamps
