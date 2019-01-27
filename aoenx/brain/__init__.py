@@ -1,1 +1,0 @@
-from .ThumbFinder import ThumbFinder
