@@ -4,6 +4,8 @@
   <img src="preview/demo.gif" alt="demo" width="600"/>
 </p>
 
+### Description
+
 Welcome to our repository! ÆON is a browser plugin that does the work of scouring through online videos for you. Simply visit a video page, activate the plugin, and see all of the video's highlights displayed visually for you, with nifty timestamps. ÆON shows you what parts of the video people are commenting about, what parts of the video other people are watching, and a (usually) precise estimate of where you'll find the original video thumbnail - just click anywhere on the chart to seek to that part of the video instantly. Spend enough time on the video, and your viewing behaviour will update our servers with the intervals of video that you spent your time watching, helping others in the effort to sift through the online junk that wastes everybody's time. 
 
 ### Tech
